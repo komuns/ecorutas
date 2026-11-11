@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}{{ tour.titulo }} · EcoRutas Chile{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'tours:catalogo' %}">Catálogo</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'tours:catalogo' %}?region={{ tour.region.slug }}">{{ tour.region.nombre }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ tour.codigo }}</li>
+    </ol>
+  </nav>
+
+  {% if not tour.activo %}
+  <div class="alert alert-warning">Este tour está dado de baja y no es visible para el público.</div>
+  {% endif %}
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      {% if tour.imagen %}
+      <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" class="img-fluid rounded mb-3">
+      {% endif %}
+      <h1 class="h3">{{ tour.titulo }}</h1>
+      <p class="text-muted">{{ tour.codigo }} · {{ tour.region.nombre }}</p>
+      <p>{{ tour.descripcion|linebreaksbr }}</p>
+      {% if tour.requisitos %}
+      <h2 class="h6">Equipo y requisitos</h2>
+      <p>{{ tour.requisitos|linebreaksbr }}</p>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="precio fs-3 mb-3">${{ tour.tarifa_por_persona|floatformat:0 }} <small class="text-muted fs-6 fw-normal">por persona</small></div>
+          <ul class="list-unstyled small mb-3">
+            <li><strong>Duración:</strong> {{ tour.duracion_dias }} día{{ tour.duracion_dias|pluralize }}</li>
+            <li><strong>Salida:</strong> {{ tour.fecha_salida|date:"d/m/Y" }}</li>
+            <li><strong>Dificultad:</strong> {{ tour.get_dificultad_display }}</li>
+            <li><strong>Estado:</strong> {{ tour.get_estado_display }}</li>
+            <li><strong>Cupos:</strong> {{ tour.cupos }}</li>
+            {% if tour.punto_encuentro %}<li><strong>Punto de encuentro:</strong> {{ tour.punto_encuentro }}</li>{% endif %}
+            <li><strong>Clima de la región:</strong> {{ tour.region.clima|default:"—" }}</li>
+          </ul>
+
+          {% if tour.disponible %}
+          <form method="post" action="{% url 'tours:itinerario_agregar' tour.pk %}">
+            {% csrf_token %}
+            <label for="personas" class="form-label">Personas</label>
+            <div class="input-group mb-2">
+              <input type="number" id="personas" name="personas" value="1" min="1" max="{{ tour.cupos }}" class="form-control">
+              <button class="btn btn-eco" type="submit">Agregar al itinerario</button>
+            </div>
+            {% if en_itinerario %}<div class="form-text">Ya tienes {{ en_itinerario }} persona(s) de este tour en tu itinerario.</div>{% endif %}
+          </form>
+          {% else %}
+          <div class="alert alert-secondary mb-0">Este tour no está disponible por ahora.</div>
+          {% endif %}
+
+          {% if user.is_staff %}
+          <hr>
+          <a href="{% url 'tours:editar' tour.slug %}" class="btn btn-outline-dark btn-sm">Editar tour</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

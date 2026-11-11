@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Dar de baja {{ tour.codigo }}{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 640px;">
+  <div class="card border-danger shadow-sm">
+    <div class="card-body">
+      <h1 class="h4">¿Dar de baja este tour?</h1>
+      <p><strong>{{ tour.codigo }} · {{ tour.titulo }}</strong></p>
+      <p class="text-muted">El tour dejará de verse en el catálogo público, pero no se borrará de la base de datos y podrás reactivarlo después.</p>
+      <form method="post" class="d-flex gap-2">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Sí, dar de baja</button>
+        <a href="{% url 'tours:gestion' %}" class="btn btn-outline-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

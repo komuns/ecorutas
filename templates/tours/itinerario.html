@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Mi itinerario · EcoRutas Chile{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="h3 mb-3">Mi itinerario de viaje</h1>
+  <p class="text-muted">Los tours se guardan temporalmente en tu sesión. Nada se reserva hasta que confirmes.</p>
+
+  {% if items %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="table-responsive">
+        <table class="table align-middle bg-white">
+          <thead><tr><th>Tour</th><th>Tarifa</th><th style="width:170px">Personas</th><th class="text-end">Subtotal</th><th></th></tr></thead>
+          <tbody>
+          {% for item in items %}
+            <tr {% if item.excede_cupos %}class="table-warning"{% endif %}>
+              <td>
+                <a href="{{ item.tour.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ item.tour.titulo }}</a>
+                <div class="small text-muted">{{ item.tour.codigo }} · salida {{ item.tour.fecha_salida|date:"d/m/Y" }} · cupos: {{ item.tour.cupos }}</div>
+                {% if item.excede_cupos %}<div class="small text-danger">Ya no hay cupos suficientes. Ajusta la cantidad.</div>{% endif %}
+              </td>
+              <td>${{ item.tour.tarifa_por_persona|floatformat:0 }}</td>
+              <td>
+                <form method="post" action="{% url 'tours:itinerario_actualizar' item.tour.pk %}" class="input-group input-group-sm">
+                  {% csrf_token %}
+                  <input type="number" name="personas" value="{{ item.personas }}" min="1" class="form-control" aria-label="Personas">
+                  <button class="btn btn-outline-dark" type="submit">Actualizar</button>
+                </form>
+              </td>
+              <td class="text-end">${{ item.subtotal|floatformat:0 }}</td>
+              <td class="text-end">
+                <form method="post" action="{% url 'tours:itinerario_quitar' item.tour.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Quitar">Quitar</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <form method="post" action="{% url 'tours:itinerario_vaciar' %}" onsubmit="return confirm('¿Vaciar todo el itinerario?');">
+        {% csrf_token %}
+        <button class="btn btn-outline-secondary btn-sm" type="submit">Vaciar itinerario</button>
+      </form>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Resumen</h2>
+          <table class="table tabla-total mb-3">
+            <tr><td>Subtotal ({{ totales.personas }} cupo{{ totales.personas|pluralize }})</td><td class="text-end">${{ totales.subtotal|floatformat:0 }}</td></tr>
+            <tr><td>Tasa ambiental ({{ totales.tasa_pct }}%)</td><td class="text-end">${{ totales.tasa_ambiental|floatformat:0 }}</td></tr>
+            <tr><td>IVA ({{ totales.iva_pct }}%)</td><td class="text-end">${{ totales.iva|floatformat:0 }}</td></tr>
+            <tr class="border-top fw-bold fs-5"><td>Total final</td><td class="text-end">${{ totales.total|floatformat:0 }}</td></tr>
+          </table>
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'tours:itinerario_confirmar' %}">
+            {% csrf_token %}
+            <button class="btn btn-eco w-100" type="submit">Confirmar solicitud</button>
+          </form>
+          {% else %}
+          <a href="{% url 'accounts:login' %}?next={% url 'tours:itinerario' %}" class="btn btn-ocre w-100">Ingresa para confirmar</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info">Tu itinerario está vacío. <a href="{% url 'tours:catalogo' %}">Explora el catálogo</a>.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Comprobante {{ codigo }}{% endblock %}
+{% block content %}
+<div class="container mt-4" style="max-width: 760px;">
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <h1 class="h4">Solicitud de reserva simulada</h1>
+      <p class="text-muted mb-1">Comprobante <strong>{{ codigo }}</strong></p>
+      <p class="text-muted">Emitido el {{ fecha|date:"d/m/Y H:i" }} a nombre de {{ user.get_full_name|default:user.username }}{% if user.perfil %} (RUT {{ user.perfil.rut }}){% endif %}</p>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Tour</th><th>Salida</th><th class="text-end">Personas</th><th class="text-end">Subtotal</th></tr></thead>
+          <tbody>
+          {% for item in items %}
+            <tr><td>{{ item.tour.codigo }} · {{ item.tour.titulo }}</td><td>{{ item.tour.fecha_salida|date:"d/m/Y" }}</td>
+                <td class="text-end">{{ item.personas }}</td><td class="text-end">${{ item.subtotal|floatformat:0 }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <table class="table tabla-total w-auto ms-auto">
+        <tr><td>Subtotal</td><td class="text-end ps-4">${{ totales.subtotal|floatformat:0 }}</td></tr>
+        <tr><td>Tasa ambiental ({{ totales.tasa_pct }}%)</td><td class="text-end ps-4">${{ totales.tasa_ambiental|floatformat:0 }}</td></tr>
+        <tr><td>IVA ({{ totales.iva_pct }}%)</td><td class="text-end ps-4">${{ totales.iva|floatformat:0 }}</td></tr>
+        <tr class="fw-bold border-top"><td>Total</td><td class="text-end ps-4">${{ totales.total|floatformat:0 }}</td></tr>
+      </table>
+      <div class="alert alert-success mt-3 mb-0">Tu itinerario fue vaciado. Este documento es una simulación y no genera cobros.</div>
+      <a href="{% url 'tours:catalogo' %}" class="btn btn-eco mt-3">Volver al catálogo</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

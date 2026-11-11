@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Crear cuenta · EcoRutas Chile{% endblock %}
+{% block content %}
+<div class="container mt-4" style="max-width: 640px;">
+  <h1 class="h3 mb-3">Crear cuenta</h1>
+  <form method="post" class="card card-body shadow-sm" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+      {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="btn btn-eco" type="submit">Registrarme</button>
+    <p class="small mt-3 mb-0">¿Ya tienes cuenta? <a href="{% url 'accounts:login' %}">Ingresa</a></p>
+  </form>
+</div>
+{% endblock %}

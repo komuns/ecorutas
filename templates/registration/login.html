@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Ingresar · EcoRutas Chile{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 440px;">
+  <h1 class="h3 mb-3">Ingresar</h1>
+  <form method="post" class="card card-body shadow-sm" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if form.errors %}<div class="alert alert-danger">Usuario o contraseña incorrectos.</div>{% endif %}
+    <div class="mb-3">
+      <label class="form-label" for="id_username">Usuario</label>
+      <input type="text" name="username" id="id_username" class="form-control" autofocus required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="id_password">Contraseña</label>
+      <input type="password" name="password" id="id_password" class="form-control" required>
+    </div>
+    <button class="btn btn-eco" type="submit">Ingresar</button>
+    <p class="small mt-3 mb-0">¿No tienes cuenta? <a href="{% url 'accounts:registro' %}">Regístrate</a></p>
+  </form>
+</div>
+{% endblock %}

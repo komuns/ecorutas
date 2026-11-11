@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de tours · EcoRutas Chile{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="h3 mb-0">Gestión de tours y expediciones</h1>
+    <a href="{% url 'tours:crear' %}" class="btn btn-eco">+ Nuevo tour</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle bg-white">
+      <thead><tr><th>Código</th><th>Título</th><th>Región</th><th class="text-end">Tarifa</th><th class="text-end">Cupos</th><th>Estado</th><th>Vigencia</th><th></th></tr></thead>
+      <tbody>
+      {% for t in tours %}
+        <tr class="{% if not t.activo %}table-secondary text-muted{% endif %}">
+          <td>{{ t.codigo }}</td>
+          <td><a href="{{ t.get_absolute_url }}" class="text-decoration-none">{{ t.titulo|truncatechars:50 }}</a></td>
+          <td>{{ t.region.nombre }}</td>
+          <td class="text-end">${{ t.tarifa_por_persona|floatformat:0 }}</td>
+          <td class="text-end">{{ t.cupos }}</td>
+          <td>{{ t.get_estado_display }}</td>
+          <td>{% if t.activo %}<span class="badge text-bg-success">Vigente</span>{% else %}<span class="badge text-bg-secondary">De baja</span>{% endif %}</td>
+          <td class="text-end text-nowrap">
+            <a href="{% url 'tours:editar' t.slug %}" class="btn btn-sm btn-outline-dark">Editar</a>
+            {% if t.activo %}
+            <a href="{% url 'tours:eliminar' t.slug %}" class="btn btn-sm btn-outline-danger">Dar de baja</a>
+            {% else %}
+            <form method="post" action="{% url 'tours:reactivar' t.slug %}" class="d-inline">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-success" type="submit">Reactivar</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-center text-muted">No hay tours registrados.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

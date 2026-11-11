@@ -1,0 +1,26 @@
+:root {
+  --pino: #1d3b34;
+  --pino-oscuro: #14291f;
+  --musgo: #5f7f4f;
+  --arena: #f3efe4;
+  --ocre: #c48a2c;
+}
+body { background: var(--arena); color: #25302b; }
+.navbar-eco { background: var(--pino); }
+.navbar-eco .nav-link, .navbar-eco .navbar-brand { color: #f3efe4; }
+.navbar-eco .nav-link:hover { color: var(--ocre); }
+.brand-mark { font-weight: 700; letter-spacing: .02em; }
+.brand-mark span { color: var(--ocre); }
+.btn-eco { background: var(--pino); border-color: var(--pino); color: #fff; }
+.btn-eco:hover { background: var(--pino-oscuro); border-color: var(--pino-oscuro); color: #fff; }
+.btn-ocre { background: var(--ocre); border-color: var(--ocre); color: #1b1b1b; }
+.btn-ocre:hover { background: #a97214; border-color: #a97214; color: #fff; }
+.hero { background: linear-gradient(135deg, var(--pino) 0%, #2d5a4a 100%); color: #f3efe4; }
+.hero h1 { font-weight: 700; max-width: 18ch; }
+.tour-card { border: 0; box-shadow: 0 1px 4px rgba(20,41,31,.15); transition: box-shadow .15s; }
+.tour-card:hover { box-shadow: 0 4px 14px rgba(20,41,31,.25); }
+.tour-card img, .tour-img-placeholder { aspect-ratio: 800 / 520; object-fit: cover; width: 100%; height: auto; }
+.tour-img-placeholder { background: #cfd8cc; display: flex; align-items: center; justify-content: center; color: #55645b; }
+.precio { color: var(--pino); font-weight: 700; font-size: 1.2rem; }
+.tabla-total td { padding: .35rem 0; border: 0; }
+footer { color: #66726b; }
